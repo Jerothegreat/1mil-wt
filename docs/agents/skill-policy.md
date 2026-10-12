@@ -18,6 +18,7 @@ This policy routes work through the smallest reliable process while keeping one 
 | Grilling, `to-spec`, `to-tickets`, new plans, ADRs | `claude-opus-5-5` | `gpt-5.6-sol` | not allowed | `high` |
 | Wayfinder, security, or cross-cutting architecture | `claude-opus-5-5` | `gpt-5.6-sol` | not allowed | `high` |
 | Independent code review and gate audit | `claude-opus-5-5` | `gpt-5.6-sol` | not allowed | `high` |
+| Video production: Remotion edits, screen recordings of a live demo, motion judged by eye | `claude-opus-5-5` | `gpt-5.6-sol` | not allowed | `high` |
 | Exceptional work that remains unresolved | `claude-fable-5-1` | `gpt-6-astra` | not allowed | `high` |
 
 The medium-reasoning default is normal. Stronger models are explicit task-level overrides, not permanent defaults. Independent review should use a different session (and ideally a different model family) from the one that implemented the work. Connection setup for flash-tier models lives in `docs/agents/model-setup.md`.
