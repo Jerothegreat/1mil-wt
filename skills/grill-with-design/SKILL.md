@@ -38,9 +38,10 @@ The owner sees the app before any plan is approved or code is written (playbook 
    - the **trust layer** in every direction: a full footer (product, company, and legal links, copyright), a cookie bar (Accept / Reject / Customize) when non-essential cookies are planned, consent and a what-we-collect line on every form, and legal links that open an outline of each legal page.
 
    **Build-ready, so the build can match it 1:1:**
-   - frames render at **exact CSS widths**: desktop 1280, tablet 768, phone 390. A "1:1" toggle shows true size; any zoomed-out overview only scales with `transform`, so the layout inside is never reflowed;
+   - frames render at **exact CSS widths**: phone 390, tablet 768, laptop 1280, and **wide 1920 and 2560** (a 1440p monitor; add 3440 when ultrawide matters). A "1:1" toggle shows true size; any zoomed-out overview only scales with `transform`, so the layout inside is never reflowed. The owner usually reviews on a laptop and cannot see wide screens any other way, so the wide frames are never skipped;
+   - **wide-screen behavior is designed, not left over:** decide what happens past the laptop width before the pick. Default: from 1536 the container widens (for example 1200 to 1440) and type, section padding, and mockups step up one size; from 1920 full-bleed bands stop at a max width and center. A fixed 1200 px column on a 2560 screen reads as a small strip with empty sides;
    - styling uses **Tailwind (pinned CDN) with the tokens as CSS variables**, and class names match what production will use, so the chosen direction's markup ports straight into components;
-   - each direction has a **spec sheet** per breakpoint: container max-width, side gutter, section padding, type scale in px, phone and laptop mockup sizes, breakpoints, and motion (what moves, duration, easing);
+   - each direction has a **spec sheet** per breakpoint, including a wide (1536+) column: container max-width, side gutter, section padding, type scale in px, phone and laptop mockup sizes, max width of full-bleed bands, breakpoints, and motion (what moves, duration, easing);
    - save the board source in the repo at `docs/design/board.html`. It is the parity reference, together with the Artifact link.
 
    Publish it with the Artifact tool (private) and give the link. Without an Artifact tool, the saved `docs/design/board.html` is opened locally.
@@ -52,7 +53,7 @@ The owner sees the app before any plan is approved or code is written (playbook 
 7. **Done** when the owner picks a direction and confirms the structure. Then:
    - write the chosen tokens and rules into `docs/standards/design-brief.md`;
    - record the direction in `docs/adr/` if it is hard to reverse;
-   - put the board link and `docs/design/board.html` in `plan.md` as the reference for the parity check (playbook step 2.5). The plan's gate includes a **pixel parity check**: Playwright screenshots of the board and the build at 1280, 768, and 390, compared side by side. Structure (section order, column layout, element sizes and positions) must match within 8 px before polish begins; differences are recorded in `evidence.md`;
+   - put the board link and `docs/design/board.html` in `plan.md` as the reference for the parity check (playbook step 2.5). The plan's gate includes a **pixel parity check**: Playwright screenshots of the board and the build at 1920, 1280, 768, and 390, compared side by side. Structure (section order, column layout, element sizes and positions) must match within 8 px before polish begins; differences are recorded in `evidence.md`. Copy `templates/viewports.html` into the project (`e2e/viewports.html`): it shows the running build in iframes at 390 to 3440 px, scaled down, so the owner can check wide screens from a laptop;
    - export the chosen direction as plain HTML, `docs/design/board-<direction>.html`, so builders port real markup and the parity check has a fixed target;
    - run `/impeccable init` and `/impeccable document` if Impeccable is installed, pointing them at the brief;
    - hand off to `to-spec`, then `to-tickets`. When the owner builds with cheaper models, write `handoff.md` with a paste-ready prompt per ticket (`templates/flash-prompt.md`).

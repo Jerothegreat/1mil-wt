@@ -46,6 +46,7 @@ Details: `docs/workflow/playbook.md`.
 - `docs/standards/`: git workflow (including parallel worktrees), documentation policy, guardrails, issue log, convention and design-brief stubs.
 - `templates/ticket.md`: ticket format for `.scratch/<feature>/issues/`.
 - `templates/flash-prompt.md`: paste-ready prompts for flash-tier builders and the review tier.
+- `templates/viewports.html`: the running site in iframes at real widths (390 to 3440), scaled down, to check wide screens from a laptop. Copy to `e2e/viewports.html`.
 - `skills/grill-with-design/`: grilling, then app flow, wireframes, references and a launch checklist, and a size-exact clickable first-look board with a trust layer (legal footer, cookie bar, consent) before any plan or code.
 
 ## Working With A Teammate

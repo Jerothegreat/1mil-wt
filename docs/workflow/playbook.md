@@ -32,7 +32,7 @@ The owner sees the design before any plan is approved or code is written. The `g
 2. **Reference board.** Publish one private page that renders 2–3 directions side by side, in light and dark, with real content and links to references. Ask the owner to pick; do not ask them to imagine.
 3. **Decision rounds.** Record each round of picks in `plan.md` under "Round N decisions", with dates. Ask one round of questions at a time, each with a recommended option.
 4. **Lock.** When the owner says "lock it": write the design brief and an ADR, export the chosen direction as plain HTML (`docs/design/board-<direction>.html`) so builders port real markup, run `/impeccable init` and `/impeccable document` (they point at the brief), then write the plan and tickets.
-5. **Parity check.** When the build exists, take Playwright screenshots of the board (`docs/design/board.html`) and the build at the same widths (1280, 768, 390) and compare them side by side. "Close" is not "1:1": structure (order, columns, sizes, positions) must match within 8 px; fix structure first, then polish. The board is built at exact CSS widths with production class names and tokens, so the build ports its markup instead of reinterpreting it.
+5. **Parity check.** When the build exists, take Playwright screenshots of the board (`docs/design/board.html`) and the build at the same widths (1920, 1280, 768, 390) and compare them side by side. Above 1920, open `e2e/viewports.html` (from `templates/viewports.html`) and look at 2560 and 3440: no horizontal scroll, the layout steps up as the brief says, bands stop at their max width. "Close" is not "1:1": structure (order, columns, sizes, positions) must match within 8 px; fix structure first, then polish. The board is built at exact CSS widths with production class names and tokens, so the build ports its markup instead of reinterpreting it.
 
 Skip this phase only for work with no visual change.
 
@@ -54,7 +54,7 @@ Run these and paste the results into `evidence.md`:
 
 - **Static checks:** typecheck, lint, unit tests, production build (one workspace command).
 - **Browser script** (Playwright or a headless browser), at minimum:
-  - two viewports × two themes (1280 light, 390 dark);
+  - two viewports × two themes (1280 light, 390 dark), plus one wide screenshot (2560) when layout changed;
   - horizontal overflow = 0 px;
   - no console errors;
   - each new interaction: open, switch, Esc closes, focus returns to the opener;
@@ -105,6 +105,7 @@ When the owner says ship:
 
 Append newest first. Each entry says what happened and the rule now in the loop.
 
+- 2026-10-23 (Alunsina): The owner, on a laptop, could not see the site on wide monitors; at 2560 and 3440 it was a 1200 px strip with bands stretched edge to edge. Board, parity, and screenshots had only covered 1280, 768, and 390, so nothing wider was ever rendered. Rules: boards include 1920 and 2560 frames and a wide (1536+) spec column; parity adds 1920; `templates/viewports.html` shows the running build at real widths from a laptop.
 - 2026-10-12: The first Alunsina board showed AI features only at the surface (booking) and boxed every section in glass cards. Rules: read the product's own AI/plan docs and show the real feature mechanics (what the AI reads, what it proposes, who approves, what the app then does); vary sections with full-width fills instead of a card per block; give long pages a navbar with active-section state and a mobile section-chip row.
 - 2026-10-12: A build made from an approved board did not match it at real screen sizes, because the board was a loose visual rather than a size-exact spec. The rule is now: boards render at exact CSS widths with production class names, tokens, and a per-breakpoint spec sheet, and the gate requires a screenshot parity check at 1280, 768, and 390 (step 2.5).
 - 2026-10-09 (1mil.dev): Plan 02a needed six rounds before the owner saw the intended look, because the first proposal was text only. The rule is now step 2.1–2.2: wireframes and a rendered board come first.
