@@ -1,6 +1,6 @@
 # NN: <Ticket title>
 
-**Plan:** `docs/workflow/plans/plan-XX-<slug>/plan.md` · **Requirements:** <IDs> · **Blocked by:** none · **Status:** ready-for-agent (flash tier allowed)
+**Spec:** `docs/workflow/plans/plan-XX-<slug>/spec.md#<section>` · **Plan:** `plan.md#<section>` · **Requirements:** <IDs> · **Blocked by:** none · **Status:** ready-for-agent (flash tier allowed)
 
 Read only: `AGENTS.md`, skill-policy Flash-Tier Rules, the plan, <exact files>.
 

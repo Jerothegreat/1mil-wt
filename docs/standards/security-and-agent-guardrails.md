@@ -13,6 +13,8 @@
 
 ## Agent Guardrails
 
+The zero-exception items are enforced by `.claude/hooks/guard.mjs` (see "Enforced Rules" in `docs/workflow/playbook.md`); the rest are guidance.
+
 - No force-push.
 - No destructive git without explicit user approval.
 - No secret dumping in logs, docs, or chat.

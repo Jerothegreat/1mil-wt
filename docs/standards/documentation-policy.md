@@ -19,6 +19,7 @@ Documentation changes are part of implementation, not cleanup for later.
 - `docs/standards/implementation-conventions.md` for durable implementation conventions
 - `docs/standards/design-brief.md` for design tokens and visual rules
 - `docs/dev/technology-stack-and-development.md` for stack and pipeline changes
+- `docs/workflow/intents/*` for intake not yet accepted into a plan
 - `docs/workflow/plans/*` for plan-specific decisions, tasks, evidence, and gates
 - `docs/workflow/traceability/requirements-map.md` for the requirement-to-implementation map
 - `.scratch/<feature>/issues/*` for temporary execution tickets and investigation notes

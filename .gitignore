@@ -16,9 +16,13 @@ Thumbs.db
 .env.*
 !.env.example
 
-# Local agent state and machine-specific package-manager overrides
+# Local agent state and machine-specific package-manager overrides.
+# Shared guardrails are committed: .claude/settings.json, hooks/, agents/.
 .agents/
-.claude/
+.claude/*
+!.claude/settings.json
+!.claude/hooks/
+!.claude/agents/
 .scratch/
 .npmrc
 graphify-out/

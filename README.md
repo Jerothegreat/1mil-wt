@@ -2,14 +2,15 @@
 
 A reusable build workflow for AI-assisted projects, first used on 1mil.dev. It covers:
 - **Design first:** grill the idea, then build a clickable first-look board at real screen sizes.
-- **Spec-driven plans:** requirements, a plan, tickets, evidence, and a gate.
+- **Spec-driven plans:** intent, requirements, a spec (what) and a plan (how), tickets, evidence, and a gate. Each fact has one home.
+- **Rules in code:** guard hooks, a plan packet check, `REVIEW.md`, and a fresh-context verifier agent, following Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook).
 - **Cheaper models for the bulk of the work:** GLM or DeepSeek build in OpenCode or Claude Code, and a stronger model reviews and merges.
 
 It is plain files, not an app. Copy it into each new project, and bring improvements back here (especially "Improving The Playbook" in `docs/workflow/playbook.md`).
 
 ## Start A New Project
 
-1. Copy everything here (including `.gitignore`, excluding `.git/`) into the new repository root. Merge `.gitignore` if one exists. Delete `skills/` in the copy; skills are installed globally (step 4).
+1. Copy everything here (including `.gitignore` and `.claude/`, excluding `.git/`) into the new repository root. Merge `.gitignore` if one exists. Delete `skills/` in the copy; skills are installed globally (step 4).
 2. Search and replace the placeholders:
 
    | Placeholder | Meaning | Example (1mil.dev) |
@@ -20,7 +21,7 @@ It is plain files, not an app. Copy it into each new project, and bring improvem
    | `{{PROD_BRANCH}}` | Production branch | `master` |
    | `{{DEPLOY}}` | Hosting / deploy target | Vercel, root `apps/web` |
 
-3. Fill `CONTEXT.md`, `docs/product/requirements-engineering.md`, and `docs/dev/technology-stack-and-development.md` (the grilling rounds produce most of this).
+3. Add `node scripts/check-packet.mjs` to the `{{CHECK_CMD}}` script (the hooks and the check need Node). Fill `CONTEXT.md`, `docs/product/requirements-engineering.md`, and `docs/dev/technology-stack-and-development.md` (the grilling rounds produce most of this).
 4. Install skills:
    - `npx skills experimental_install`: the skills listed in `skills-lock.json` (grilling, to-spec, to-tickets, implement, tdd, code-review, and more).
    - Kit skills in `skills/`: copy each folder to `~/.claude/skills/` (Claude Code) and `~/.config/opencode/skills/` (OpenCode).
@@ -30,9 +31,9 @@ It is plain files, not an app. Copy it into each new project, and bring improvem
 ## The Loop
 
 ```text
-grill-with-design ─▶ first-look board ─▶ "lock it" ─▶ design brief + ADR + board export
-      ─▶ plan + tickets (+ handoff prompts) ─▶ flash models build in worktrees
-      ─▶ review tier checks, Impeccable audit, merges ─▶ parity check vs board ─▶ promote
+intent.md ─▶ grill-with-design ─▶ first-look board ─▶ "lock it" ─▶ spec.md approved + design brief + ADR + board export
+      ─▶ plan.md approved + tickets (+ handoff prompts) ─▶ flash models build in worktrees
+      ─▶ review tier: REVIEW.md, verifier, Impeccable audit, merges ─▶ parity check vs board ─▶ promote
 ```
 
 Details: `docs/workflow/playbook.md`.
@@ -40,8 +41,11 @@ Details: `docs/workflow/playbook.md`.
 ## What's Inside
 
 - `AGENTS.md` / `CLAUDE.md`: agent rules (Claude Code, Codex, and OpenCode read them).
+- `REVIEW.md`: review policy (three passes, what counts as Important, at most five nits).
+- `.claude/settings.json` + `.claude/hooks/guard.mjs`: guard hook (push asks; force-push, test edits during a fix, and `.env` access are denied; approved specs ask). `.claude/agents/verifier.md`: fresh-context final check.
+- `scripts/check-packet.mjs`: fails when a plan is missing a file, a fact sits in the wrong file, or a cited requirement ID does not exist. Tests: `node --test .claude/hooks/*.test.mjs scripts/*.test.mjs`.
 - `docs/workflow/playbook.md`: the build loop and its "Rules Learned".
-- `docs/workflow/`: roadmap, plan packet template (`plan`, `tasks`, `evidence`, `gate`), traceability map.
+- `docs/workflow/`: intents, roadmap, plan packet template (`intent`, `spec`, `plan`, `tasks`, `evidence`, `gate`), traceability map.
 - `docs/agents/`: bootstrap, skill and model routing (flash-tier rules, Impeccable), local issue tracker, model setup (Claude Code and OpenCode with GLM or DeepSeek).
 - `docs/standards/`: git workflow (including parallel worktrees), documentation policy, guardrails, issue log, convention and design-brief stubs.
 - `templates/ticket.md`: ticket format for `.scratch/<feature>/issues/`.
@@ -53,4 +57,4 @@ Details: `docs/workflow/playbook.md`.
 
 - Clone this repo, then follow "Start A New Project" for each new build.
 - Improve the kit through a branch and pull request; note the lesson in "Improving The Playbook".
-- Keys and local agent state never go in the repo (`.claude/`, `.agents/`, `.scratch/`, and `.env*` are ignored).
+- Keys and local agent state never go in the repo (`.claude/` except `settings.json`, `hooks/`, and `agents/`; `.agents/`, `.scratch/`, and `.env*` are ignored).

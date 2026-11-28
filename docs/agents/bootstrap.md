@@ -28,6 +28,6 @@ Completion criterion: each command has an observed pass, skip, or failure record
 
 ## Local Agent State
 
-- `.agents/` and `.claude/` contain local skill installations and may differ by developer.
+- `.agents/` and `.claude/` contain local skill installations and may differ by developer, except the committed guardrails: `.claude/settings.json`, `.claude/hooks/`, and `.claude/agents/`. The hooks need Node on the PATH.
 - `.scratch/` contains local feature notes and issue records.
 - `CONTEXT.md`, `AGENTS.md`, `CLAUDE.md`, `docs/agents/**`, and `skills-lock.json` are repository-shared guidance.

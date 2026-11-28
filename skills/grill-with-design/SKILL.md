@@ -23,7 +23,7 @@ The owner sees the app before any plan is approved or code is written (playbook 
 
 2. **App flow.** When screens and the primary flow are settled, write a Mermaid `flowchart`: screens are nodes, user actions are edge labels, and the entry and goal are marked.
 
-3. **Wireframes.** Draw ASCII wireframes for each core screen, desktop (about 100 columns) and phone (about 40 columns), with a short component list under each. Save the flow and wireframes in the active plan's `plan.md` under "Design Spec", or in `docs/design/first-look.md` when no plan exists yet. They do not live only in chat.
+3. **Wireframes.** Draw ASCII wireframes for each core screen, desktop (about 100 columns) and phone (about 40 columns), with a short component list under each. Save the flow and wireframes in the active plan's `spec.md` under "Design Spec", or in `docs/design/first-look.md` when no plan exists yet. They do not live only in chat.
 
 4. **Structure check.** Show the flow and wireframes, then ask one round: screens, order, and what is on each. Fix the structure before any styling.
 
@@ -48,12 +48,12 @@ The owner sees the app before any plan is approved or code is written (playbook 
 
    Alongside the board, write `docs/design/build-overview.md` in plain words: what will be built, page by page and section by section, what each section will do, the tools, what the owner still owes, and the steps from here to launch.
 
-6. **Pick rounds.** Ask in the grilling format: one numbered question per decision (direction, mixes such as "B's layout with A's colors", per-screen changes), each with a recommended answer. Republish the same board URL each round. Record each round as "Round N decisions (YYYY-MM-DD)" in `plan.md`.
+6. **Pick rounds.** Ask in the grilling format: one numbered question per decision (direction, mixes such as "B's layout with A's colors", per-screen changes), each with a recommended answer. Republish the same board URL each round. Record each round as "Round N decisions (YYYY-MM-DD)" in `spec.md`.
 
 7. **Done** when the owner picks a direction and confirms the structure. Then:
    - write the chosen tokens and rules into `docs/standards/design-brief.md`;
    - record the direction in `docs/adr/` if it is hard to reverse;
-   - put the board link and `docs/design/board.html` in `plan.md` as the reference for the parity check (playbook step 2.5). The plan's gate includes a **pixel parity check**: Playwright screenshots of the board and the build at 1920, 1280, 768, and 390, compared side by side. Structure (section order, column layout, element sizes and positions) must match within 8 px before polish begins; differences are recorded in `evidence.md`. Copy `templates/viewports.html` into the project (`e2e/viewports.html`): it shows the running build in iframes at 390 to 3440 px, scaled down, so the owner can check wide screens from a laptop;
+   - put the board link and `docs/design/board.html` in `spec.md` as the reference for the parity check (playbook step 2.5). The plan's gate includes a **pixel parity check**: Playwright screenshots of the board and the build at 1920, 1280, 768, and 390, compared side by side. Structure (section order, column layout, element sizes and positions) must match within 8 px before polish begins; differences are recorded in `evidence.md`. Copy `templates/viewports.html` into the project (`e2e/viewports.html`): it shows the running build in iframes at 390 to 3440 px, scaled down, so the owner can check wide screens from a laptop;
    - export the chosen direction as plain HTML, `docs/design/board-<direction>.html`, so builders port real markup and the parity check has a fixed target;
    - run `/impeccable init` and `/impeccable document` if Impeccable is installed, pointing them at the brief;
    - hand off to `to-spec`, then `to-tickets`. When the owner builds with cheaper models, write `handoff.md` with a paste-ready prompt per ticket (`templates/flash-prompt.md`).

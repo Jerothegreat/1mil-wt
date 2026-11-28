@@ -27,7 +27,7 @@ The medium-reasoning default is normal. Stronger models are explicit task-level 
 
 Flash-tier models implement; they do not plan, decide, or approve.
 
-- One ticket per session. Read `AGENTS.md`, the ticket, and only the files the ticket or `plan.md` names.
+- One ticket per session. Read `AGENTS.md`, the ticket, and only the files the ticket or `plan.md` names. `plan.md` is the HOW; open `spec.md` only for the sections the ticket links.
 - If the ticket is ambiguous, a fact is missing, or the change would touch a file outside the ticket's scope, stop and report instead of guessing. Never invent content facts.
 - Follow `tdd` at the agreed seams; keep the smallest correct diff and no new dependencies.
 - Finish with `{{CHECK_CMD}}` and paste its result lines into the report.
@@ -52,7 +52,9 @@ The handoff also includes the review-tier prompt the owner pastes into Claude Co
 | The appropriate workflow is unclear | Use `ask-matt` to route it. |
 | A substantial repo-based feature still has product or design questions | Use `grill-with-docs`; use `grill-me` only outside a working repository. |
 | The effort is too large or foggy for one planning session | Use `wayfinder` with the high-reasoning model to resolve decisions, then collapse them into the canonical plan before building. |
-| Agreed discussion must become an execution contract | Use `to-spec`, targeting the active plan's `plan.md`. |
+| New work arrives (idea, feedback batch, finding, incident) | Write `docs/workflow/intents/NN-<slug>.md` from the template; the owner accepts or closes it. |
+| Agreed discussion must become an execution contract | Use `to-spec`, targeting the active plan's `spec.md` (the WHAT). The owner approves it. |
+| An approved spec needs a build plan | Use plan mode with the high-reasoning model to write `plan.md` (files, order, proving tests); the review tier approves it before any ticket. |
 | A plan needs independently executable slices | Use `to-tickets`; detailed tickets live under `.scratch/<feature>/issues/` and `tasks.md` is their ordered index. |
 | A ticket is ready to build | Use `implement` inline; it drives `tdd` where an executable seam exists and ends with review. |
 | A behavior change or bug fix has an executable test seam | Use `tdd` before implementation. |
@@ -65,7 +67,7 @@ The handoff also includes the review-tier prompt the owner pastes into Claude Co
 | A human-only dashboard, credential, DNS, or provisioning step blocks work | Use `wizard`. |
 | A focused module/interface/seam design is needed | Use `codebase-design`. |
 | Terms, ownership, requirements, or durable architecture decisions change | Use `domain-modeling`; record hard-to-reverse decisions in `docs/adr/`. |
-| A non-trivial code diff is ready for completion | Use `code-review` against the originating plan or ticket. |
+| A non-trivial code diff is ready for completion | Use `code-review` against `REVIEW.md` and the originating spec, plan, or ticket, then the `verifier` agent in a fresh context. |
 | Agent-facing instructions or workflow documents change | Use `writing-for-agents`. |
 | Work crosses a real session, model, or checkout boundary | Use `handoff`, referencing existing artifacts instead of restating them. |
 | A repository-wide architecture survey is explicitly requested | Use `improve-codebase-architecture`; it remains opt-in. |
@@ -88,8 +90,10 @@ The handoff also includes the review-tier prompt the owner pastes into Claude Co
 
 - `docs/workflow/README.md` is the only implementation entrypoint.
 - `docs/workflow/roadmap.md` identifies the owning plan.
-- Every active plan has `plan.md`, `tasks.md`, `evidence.md`, and `gate.md`.
-- `plan.md` owns scope, decisions, interfaces, dependencies, and completion criteria.
+- Every active plan has `intent.md`, `spec.md`, `plan.md`, `tasks.md`, `evidence.md`, and `gate.md`; `scripts/check-packet.mjs` enforces it.
+- `intent.md` is the accepted intake and is frozen once Accepted.
+- `spec.md` owns problem, outcome, design, decisions, acceptance criteria, and scope. The owner approves it.
+- `plan.md` owns files, order of work, interfaces, dependencies, and proving tests. The review tier approves it.
 - `tasks.md` is a short execution index; detailed temporary tickets live in `.scratch`.
 - `evidence.md` records observed commands and results. Expected results are not evidence.
 - `gate.md` owns readiness, blockers, independent review, and completion status.
@@ -100,7 +104,7 @@ The handoff also includes the review-tier prompt the owner pastes into Claude Co
 
 - Pure documentation or configuration changes do not require `tdd`, but their links and configuration must be verified.
 - If no executable seam exists, record that fact rather than inventing a test.
-- Non-trivial code changes end with `{{CHECK_CMD}}` and `code-review`.
+- Non-trivial code changes end with `{{CHECK_CMD}}`, `code-review` against `REVIEW.md`, and a `verifier` PASS.
 - Do not duplicate a plan, specification, ticket, decision, or status across durable files.
 
 ## Inactive Skills

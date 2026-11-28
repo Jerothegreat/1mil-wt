@@ -7,8 +7,11 @@ This file governs AI-assisted work in this repository. `CLAUDE.md` imports this 
 ## Workspace Map
 
 - `<app dirs>`: <what each holds>.
-- `docs/workflow/` is the canonical execution hierarchy. Read the roadmap and the active plan's `plan.md`, `tasks.md`, `evidence.md`, and `gate.md` before implementation.
+- `docs/workflow/` is the canonical execution hierarchy. Read the roadmap and the active plan's `spec.md`, `plan.md`, `tasks.md`, `evidence.md`, and `gate.md` before implementation.
 - `docs/product/requirements-engineering.md` is the canonical atomic requirement source.
+- `docs/workflow/intents/` holds intake (`intent.md`) not yet accepted into a plan.
+- `REVIEW.md` is the review policy for every review: AI, review tier, and the `verifier` agent.
+- `.claude/settings.json`, `.claude/hooks/`, and `.claude/agents/` are committed, shared guardrails; `scripts/check-packet.mjs` is the plan packet check.
 
 Generated and local state (build output, `node_modules/`, `.env` files, local caches) is excluded from source audits and preserved unless a task explicitly addresses it.
 
@@ -17,7 +20,7 @@ Generated and local state (build output, `node_modules/`, `.env` files, local ca
 - Read `docs/agents/bootstrap.md` before installing dependencies or starting a service.
 - Read `docs/agents/skill-policy.md`, `docs/agents/domain.md`, and `docs/agents/issue-tracker.md` before meaningful agent work.
 - Use the committed manifests (package manifest, lockfile, `skills-lock.json`, `.env.example` files) as the setup contract.
-- Treat `.agents/`, `.claude/`, `.scratch/`, and local `.npmrc` files as developer-local state. Do not copy machine-specific paths or installed skill payloads into the repository.
+- Treat `.agents/`, `.claude/` (except the committed `settings.json`, `hooks/`, and `agents/`), `.scratch/`, and local `.npmrc` files as developer-local state. Do not copy machine-specific paths or installed skill payloads into the repository.
 - Finish the bootstrap by running `{{CHECK_CMD}}` and recording any unavailable database, API key, or platform dependency as a blocker.
 
 ## Source Of Truth
@@ -66,7 +69,7 @@ See `docs/agents/domain.md` for the domain-document reading order.
 
 ### Workflow docs
 
-Start at `docs/workflow/README.md`. Follow `roadmap.md` to the active plan, then read that plan's `plan.md`, `tasks.md`, `evidence.md`, and `gate.md` before changing code or documentation. The build loop (design first, feedback passes, verify, promote) is `docs/workflow/playbook.md`.
+Start at `docs/workflow/README.md`. Follow `roadmap.md` to the active plan, then read that plan's `spec.md`, `plan.md`, `tasks.md`, `evidence.md`, and `gate.md` before changing code or documentation. Each fact has one home ("One Home Per Fact" in `docs/workflow/README.md`): link to it, never restate it. The build loop (design first, feedback passes, verify, promote) is `docs/workflow/playbook.md`.
 
 ## Skill Override
 
@@ -93,6 +96,19 @@ Durable detail lives in `docs/standards/implementation-conventions.md`. The shor
 - Do not push unless the user explicitly asks.
 - Use Conventional Commits.
 - Update docs as part of the same task when behavior, workflow, or architecture changes.
+
+## Enforced Rules
+
+These hold without exception, so they live in code (`.claude/hooks/guard.mjs`, `scripts/check-packet.mjs`); each block says how to proceed. Details: "Enforced Rules" in `docs/workflow/playbook.md`.
+
+- `git push` asks the owner; force-push and remote deletion are denied.
+- While `.scratch/test-lock` exists, test files cannot be edited: fix the code, not the test.
+- `.env` files are never read or edited; Accepted intents are frozen; Approved specs and the guardrail files ask before edits.
+- `{{CHECK_CMD}}` includes `node scripts/check-packet.mjs`.
+
+## Recurring Mistakes
+
+When an agent makes the same mistake twice, add the correction here as one line, or enforce it in code when it must always hold. The `issue-log.md` entry links to the rule instead of restating it.
 
 ## Guardrails
 

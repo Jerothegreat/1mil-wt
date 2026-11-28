@@ -1,34 +1,25 @@
 # Plan 00: <Name>
 
 **Status:** Planned
-**Owner:** <app or area>
+**Spec:** [spec.md](spec.md) (approved YYYY-MM-DD)
+**Approved by:** <review-tier session and model, date>
 **Dependencies:** <accounts, env vars, earlier plans>
-**Requirements:** <IDs>; <ADRs>
+**Requirements:** <IDs>
 
-## Problem Statement
-
-<Why this plan exists, in two or three sentences.>
-
-## Solution
-
-<What will be live when the plan passes.>
-
-## Design Spec (UI work)
-
-<ASCII wireframes (desktop and phone), component anatomy, tokens, UX rules. Link the reference board. Playbook step 2.>
-
-### Round 1 decisions (YYYY-MM-DD)
-
-- <pick>
+The HOW. This file owns files, order of work, interfaces, and the tests that prove the change. Link spec sections (`spec.md#acceptance-criteria`) instead of restating them. Readiness test: someone who never saw the conversation could build the change from `spec.md` and this file alone. Nothing is implemented before this file is approved. When the build diverges, update this file in the same commit.
 
 ## Implementation Decisions
 
-- **<Area>.** <Decision with exact files, interfaces, limits.>
+- **<Area>.** <Decision with exact files, interfaces, limits.> Serves: <spec.md acceptance item>.
+
+## Order Of Work
+
+<Waves, matching tasks.md. Tasks that share files run in sequence.>
 
 ## Testing Decisions
 
-<Which seams get test-first, with literal expected values.>
+<Which seams get test-first, with literal expected values. Bug fixes: commit the failing test, then create `.scratch/test-lock` so test files stay locked until the fix passes.>
 
-## Out Of Scope
+## Divergences
 
-<What later plans own.>
+<YYYY-MM-DD: what changed from the approved plan and why.>

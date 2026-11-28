@@ -9,7 +9,7 @@ Detailed tickets and implementation notes live as Markdown files under `.scratch
 - Keep a `Status:` line near the top of each issue file.
 - Append discussion under a `## Comments` heading.
 - Keep `tasks.md` in the owning workflow plan as a short ordered index linking these tickets; do not copy full ticket bodies into it.
-- `to-spec` targets the owning canonical `plan.md`; it must not create a second durable specification under `.scratch`.
+- `to-spec` targets the owning canonical `spec.md`; it must not create a second durable specification under `.scratch`. Tickets link spec and plan sections instead of restating them.
 - `.scratch/` is local to one checkout. A new worktree does not get it; copy the tickets in when creating the worktree.
 
 Keep recurring repository issue history in `docs/standards/issue-log.md`, and record verified execution in the owning plan's `evidence.md`.

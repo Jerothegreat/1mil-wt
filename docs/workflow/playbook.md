@@ -21,6 +21,7 @@ The loop was distilled from the 1mil.dev Plan 02a retro-OS redesign: board first
 
 ### 1. Requirements
 
+- Work enters as an `intent.md` (problem, proposed outcome, affected users and systems, constraints, open questions) in `docs/workflow/intents/`. The owner accepts or closes it before any grilling.
 - Every behavior has a stable ID (`PG-`, `SF-`, `CM-`, `AI-`, `NFR-`) in one requirements file.
 - A plan names the IDs it touches; nothing is "done" without evidence against an ID.
 
@@ -28,22 +29,26 @@ The loop was distilled from the 1mil.dev Plan 02a retro-OS redesign: board first
 
 The owner sees the design before any plan is approved or code is written. The `grill-with-design` skill runs this whole step.
 
-1. **UI/UX spec with wireframes.** Write the page layout as ASCII wireframes (desktop and phone), the component anatomy, the toolkit rules (for example tilt, overlap, and color rules), tokens for light and dark, and the UX rules (reading order, keyboard, reduced motion). Put it in the plan, not in chat.
+1. **UI/UX spec with wireframes.** Write the page layout as ASCII wireframes (desktop and phone), the component anatomy, the toolkit rules (for example tilt, overlap, and color rules), tokens for light and dark, and the UX rules (reading order, keyboard, reduced motion). Put it in `spec.md`, not in chat.
 2. **Reference board.** Publish one private page that renders 2–3 directions side by side, in light and dark, with real content and links to references. Ask the owner to pick; do not ask them to imagine.
-3. **Decision rounds.** Record each round of picks in `plan.md` under "Round N decisions", with dates. Ask one round of questions at a time, each with a recommended option.
-4. **Lock.** When the owner says "lock it": write the design brief and an ADR, export the chosen direction as plain HTML (`docs/design/board-<direction>.html`) so builders port real markup, run `/impeccable init` and `/impeccable document` (they point at the brief), then write the plan and tickets.
+3. **Decision rounds.** Record each round of picks in `spec.md` under "Round N decisions", with dates. Ask one round of questions at a time, each with a recommended option.
+4. **Lock.** When the owner says "lock it": write the design brief and an ADR, export the chosen direction as plain HTML (`docs/design/board-<direction>.html`) so builders port real markup, run `/impeccable init` and `/impeccable document` (they point at the brief), mark `spec.md` Approved, then write the plan and tickets.
 5. **Parity check.** When the build exists, take Playwright screenshots of the board (`docs/design/board.html`) and the build at the same widths (1920, 1280, 768, 390) and compare them side by side. Above 1920, open `e2e/viewports.html` (from `templates/viewports.html`) and look at 2560 and 3440: no horizontal scroll, the layout steps up as the brief says, bands stop at their max width. "Close" is not "1:1": structure (order, columns, sizes, positions) must match within 8 px; fix structure first, then polish. The board is built at exact CSS widths with production class names and tokens, so the build ports its markup instead of reinterpreting it.
 
 Skip this phase only for work with no visual change.
 
 ### 3. Plan Packet
 
-Each plan has four files: `plan.md` (scope, decisions, design spec, out of scope), `tasks.md` (one line per task with ID, summary, and requirement IDs), `evidence.md` (observed results only), and `gate.md` (checklist and status). Tickets for parallel or delegated work go in a local scratch folder; `tasks.md` indexes them.
+Each plan has six files: `intent.md` (the accepted intake, frozen), `spec.md` (the WHAT: problem, outcome, design spec, decisions, acceptance criteria, out of scope; the owner approves), `plan.md` (the HOW: files, order of work, interfaces, proving tests; the review tier approves), `tasks.md` (one line per task with ID, summary, and requirement IDs), `evidence.md` (observed results only), and `gate.md` (checklist and status). Tickets for parallel or delegated work go in a local scratch folder; `tasks.md` indexes them. Each fact has one home ("One Home Per Fact" in `docs/workflow/README.md`).
+
+- **Plan readiness test:** someone who never saw the conversation could build the change from `spec.md` and `plan.md` alone. Interrogate the plan until that is true.
+- **Nothing is implemented without an approved plan.** When the build diverges, update `plan.md` in the same commit and add a Divergences line. A change to an approved `spec.md` needs the owner.
 
 ### 4. Build In Slices
 
 - **Inline by default.** Use one session in one checkout. Delegate only isolated, independently verifiable tickets.
 - **Test first at seams.** Content rules, parsers, and pure builders get a failing test before the code. Record the red-then-green result in the evidence row.
+- **Bug fixes lock the test.** Write the failing test, confirm it fails for the expected reason, commit it, then create `.scratch/test-lock`. The guard hook blocks test edits until the owner removes the lock. Fix the code, not the test.
 - **Content is data.** Pages read content files. Missing facts stay hidden or show a labeled placeholder ("screenshot soon", "details soon"). Never invent a fact.
 - **One shared component per pattern.** When a third place needs the same behavior (for example a maximize popup), extract it then, not before.
 - **Docs move with the code.** The same change updates the design brief, requirements, plan packet, and issue log.
@@ -61,6 +66,8 @@ Run these and paste the results into `evidence.md`:
   - reduced motion: no animation, content still visible;
   - screenshots of each new surface, actually looked at.
 - **Design QA:** `/impeccable critique` and `/impeccable audit` on each new surface; findings go in the evidence row (see Impeccable in `docs/agents/skill-policy.md`).
+- **Review:** `code-review` against `REVIEW.md` (three passes: bugs, security, compliance; at most five nits).
+- **Verifier:** before reporting done or committing, run the `verifier` agent (`.claude/agents/verifier.md`). It works in a fresh context, so its verdict is not shaped by the session that wrote the code. Paste its verdict into the evidence row.
 - **Pass/fail is observed, never expected.** If a check was skipped, the evidence row says so.
 
 ### 6. Owner Feedback Pass
@@ -68,7 +75,7 @@ Run these and paste the results into `evidence.md`:
 The owner reviews the running build and sends a batch of notes. Each batch becomes one pass:
 
 1. Restate the batch as a numbered list. Name any interpretation you chose (for example, "scroll navigation" read as scrollbars), and note any reversal of an earlier decision.
-2. Add one task line (for example `RO-14 Owner feedback pass 5: ...`) and a "Feedback Pass N" note in `plan.md` if a decision changed.
+2. Add one task line (for example `RO-14 Owner feedback pass 5: ...`) and a "Feedback Pass N" line under "Changes After Approval" in `spec.md` if a decision changed (the owner's notes are the approval).
 3. Build, then verify (step 5), then append one evidence row.
 4. Report back in the same order as the owner's list: what changed, what was assumed, what the owner must supply.
 
@@ -90,6 +97,23 @@ When the owner says ship:
 - Everything the owner will "fix later" goes into one **Content And Setup Owed** list in the roadmap: missing facts, media, credentials, and environment variables. Each item names the file or setting that takes it.
 - After promotion, add 1–3 lines to "Improving The Playbook": what slowed the build, and the rule that would have prevented it.
 
+## Enforced Rules
+
+A rule that must hold without exception lives in code, not only in prose. Each block explains itself and names the route to approval.
+
+| Rule | Enforced by | Decision |
+| --- | --- | --- |
+| Push only when the owner asks | `.claude/hooks/guard.mjs` on `git push` | Ask |
+| Never force-push or delete remote branches | guard hook | Deny |
+| Fix the code, not the test | guard hook, while `.scratch/test-lock` exists | Deny |
+| Secrets stay out of agent context | guard hook on `.env*` (not `.env.example`) | Deny |
+| Agents do not loosen their own guardrails | guard hook on `.claude/settings.json` and `.claude/hooks/` | Ask |
+| Approved scope changes only with the owner | guard hook on an Approved `spec.md` | Ask |
+| An Accepted intent is history | guard hook on an Accepted `intent.md` | Deny |
+| Packet files exist; one home per fact; cited IDs exist | `scripts/check-packet.mjs` in `{{CHECK_CMD}}` | Fail |
+
+Limits: the hook checks tool calls, not every shell edit (for example `sed` on a test file), so review still checks for edited tests. Hook tests: `node --test .claude/hooks/*.test.mjs scripts/*.test.mjs`.
+
 ## Rules Learned
 
 - Wireframes before plans; a board before code. The owner rejected text-only plans until a wireframe existed.
@@ -100,11 +124,13 @@ When the owner says ship:
 - A popup is for browsing within a page (projects, experience, full road). Long reads that need a shareable URL get their own page (blog posts).
 - An unfinished feature ships with a visible "under construction" sign rather than a broken or fake answer.
 - Log every setup or tooling surprise once in the issue log.
+- When an agent makes the same mistake twice, the correction goes into `AGENTS.md` "Recurring Mistakes", or into code if it must always hold.
 
 ## Improving The Playbook
 
 Append newest first. Each entry says what happened and the rule now in the loop.
 
+- 2026-11-28: Adopted Anthropic's "The AI-native SDLC playbook" (claude.com, 2026-08-21) where it fits a solo kit. Zero-exception rules were prose only. Rules: intake as `intent.md`, `spec.md` (WHAT, owner) split from `plan.md` (HOW, review tier), one home per fact with a packet check, guard hooks, `REVIEW.md`, and a fresh-context `verifier` agent. Evals, CI agents, and the Maintain loop are deferred.
 - 2026-10-23 (Alunsina): The owner, on a laptop, could not see the site on wide monitors; at 2560 and 3440 it was a 1200 px strip with bands stretched edge to edge. Board, parity, and screenshots had only covered 1280, 768, and 390, so nothing wider was ever rendered. Rules: boards include 1920 and 2560 frames and a wide (1536+) spec column; parity adds 1920; `templates/viewports.html` shows the running build at real widths from a laptop.
 - 2026-10-12: The first Alunsina board showed AI features only at the surface (booking) and boxed every section in glass cards. Rules: read the product's own AI/plan docs and show the real feature mechanics (what the AI reads, what it proposes, who approves, what the app then does); vary sections with full-width fills instead of a card per block; give long pages a navbar with active-section state and a mobile section-chip row.
 - 2026-10-12: A build made from an approved board did not match it at real screen sizes, because the board was a loose visual rather than a size-exact spec. The rule is now: boards render at exact CSS widths with production class names, tokens, and a per-breakpoint spec sheet, and the gate requires a screenshot parity check at 1280, 768, and 390 (step 2.5).
@@ -116,7 +142,10 @@ Append newest first. Each entry says what happened and the rule now in the loop.
 | Playbook term | {{PROJECT}} path |
 | --- | --- |
 | Requirements file | `docs/product/requirements-engineering.md` |
+| Intake | `docs/workflow/intents/` |
 | Plan packets | `docs/workflow/plans/plan-XX-*/` |
+| Review policy | `REVIEW.md` |
+| Guardrails | `.claude/settings.json`, `.claude/hooks/`, `.claude/agents/` |
 | Design spec and tokens | `docs/standards/design-brief.md` |
 | Decisions | `docs/adr/` |
 | Issue log | `docs/standards/issue-log.md` |
