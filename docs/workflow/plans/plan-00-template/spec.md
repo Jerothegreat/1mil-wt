@@ -5,7 +5,7 @@
 **Intent:** [intent.md](intent.md)
 **Requirements:** <IDs>; <ADRs>
 
-The WHAT. This file owns the problem, outcome, design, decisions, acceptance criteria, and scope. `plan.md` links here and never restates it. Status moves Draft → Approved (owner). After Approved, the guard hook asks before any edit; each change gets a dated line under "Changes After Approval".
+The WHAT, approved by the owner (Draft → Approved). What belongs here: "One Home Per Fact" in `docs/workflow/README.md`. After approval, each change gets a dated line under "Changes After Approval".
 
 ## Problem
 

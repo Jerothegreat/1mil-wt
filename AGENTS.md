@@ -99,12 +99,7 @@ Durable detail lives in `docs/standards/implementation-conventions.md`. The shor
 
 ## Enforced Rules
 
-These hold without exception, so they live in code (`.claude/hooks/guard.mjs`, `scripts/check-packet.mjs`); each block says how to proceed. Details: "Enforced Rules" in `docs/workflow/playbook.md`.
-
-- `git push` asks the owner; force-push and remote deletion are denied.
-- While `.scratch/test-lock` exists, test files cannot be edited: fix the code, not the test.
-- `.env` files are never read or edited; Accepted intents are frozen; Approved specs and the guardrail files ask before edits.
-- `{{CHECK_CMD}}` includes `node scripts/check-packet.mjs`.
+Rules that must hold without exception live in code (`.claude/hooks/guard.mjs`, `scripts/check-packet.mjs`). A blocked call explains itself and names the route to approval. The rule list and its limits live only in "Enforced Rules" in `docs/workflow/playbook.md`.
 
 ## Recurring Mistakes
 

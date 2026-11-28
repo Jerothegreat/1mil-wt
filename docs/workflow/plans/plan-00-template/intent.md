@@ -3,7 +3,7 @@
 **Status:** Draft
 **Originator:** <who raised it> · **Date:** YYYY-MM-DD · **Source:** <owner idea | feedback pass | issue log | review finding | incident>
 
-Intake before any grilling or spec. New intents start as a copy of this file at `docs/workflow/intents/NN-<slug>.md`. Status moves Draft → Accepted → spec.md (then `git mv` it into the new plan folder as `intent.md`) or Draft → Closed: <reason> (it stays in `intents/`). Once Accepted, this file is history: `spec.md` is the live copy, and the guard hook blocks edits here.
+Intake before any grilling or spec. New intents start as a copy of this file at `docs/workflow/intents/NN-<slug>.md`. Status moves Draft → Accepted (the owner takes it into planning; it moves into the new plan folder as `intent.md`) or Draft → Closed: <reason> (it stays in `intents/`). Once Accepted, this file is frozen; grilling and `spec.md` carry it forward, and `spec.md` becomes the live copy.
 
 ## Problem
 

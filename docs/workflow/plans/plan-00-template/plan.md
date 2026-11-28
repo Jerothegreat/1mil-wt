@@ -6,7 +6,7 @@
 **Dependencies:** <accounts, env vars, earlier plans>
 **Requirements:** <IDs>
 
-The HOW. This file owns files, order of work, interfaces, and the tests that prove the change. Link spec sections (`spec.md#acceptance-criteria`) instead of restating them. Readiness test: someone who never saw the conversation could build the change from `spec.md` and this file alone. Nothing is implemented before this file is approved. When the build diverges, update this file in the same commit.
+The HOW, approved by the review tier. What belongs here: "One Home Per Fact" in `docs/workflow/README.md`; readiness and divergence rules: playbook step 3. Link spec sections (`spec.md#acceptance-criteria`) instead of restating them.
 
 ## Implementation Decisions
 
@@ -18,7 +18,7 @@ The HOW. This file owns files, order of work, interfaces, and the tests that pro
 
 ## Testing Decisions
 
-<Which seams get test-first, with literal expected values. Bug fixes: commit the failing test, then create `.scratch/test-lock` so test files stay locked until the fix passes.>
+<Which seams get test-first, with literal expected values. Bug fixes follow playbook step 4 ("Bug fixes lock the test").>
 
 ## Divergences
 

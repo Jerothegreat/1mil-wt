@@ -18,22 +18,22 @@ docs/workflow/README.md
 
 **How a build moves (the loop):** [`playbook.md`](playbook.md): requirements, design first (wireframes and a reference board), plan packet, build slices, verify, owner feedback passes, promote, owed list.
 
-Read the owning plan's `spec.md`, `plan.md`, `tasks.md`, `evidence.md`, and `gate.md` before changing code or documentation. Supporting design or runbook files are optional and must be linked from `plan.md`. A plan is not complete because source code exists; its evidence and gate files must agree with `traceability/requirements-map.md`.
+Read the owning plan's `spec.md`, `plan.md`, `tasks.md`, `evidence.md`, and `gate.md` before changing code or documentation. Supporting files are optional and must be linked from `spec.md` (design) or `plan.md` (runbooks). A plan is not complete because source code exists; its evidence and gate files must agree with `traceability/requirements-map.md`.
 
 ## Spec-Driven Flow
 
-0. An idea, feedback batch, review finding, or incident starts as `intents/NN-<slug>.md` (copy `plans/plan-00-template/intent.md`). The owner accepts or closes it.
+0. An idea, feedback batch, review finding, or incident starts as `intents/NN-<slug>.md` (copy `plans/plan-00-template/intent.md`). The owner closes it, or accepts it into planning: mark it Accepted, create the plan folder, and `git mv` the intent in as `intent.md`.
 1. Requirements live in `docs/product/requirements-engineering.md` with stable IDs.
 2. `grill-with-docs` resolves open product questions for the next plan. UI work uses `grill-with-design` instead: app flow, ASCII wireframes, and a rendered first-look board, and the owner picks before the spec is approved (playbook step 2).
-3. `to-spec` writes the agreed WHAT into that plan's `spec.md`, naming requirement IDs. The owner approves it; the intent is marked Accepted and moved into the plan folder.
-4. Plan mode writes the HOW into `plan.md` (files, order, proving tests). The review tier approves it. Nothing is implemented without an approved plan.
+3. `to-spec` writes the agreed WHAT into that plan's `spec.md`, naming requirement IDs. The owner approves it.
+4. Plan mode writes the HOW into `plan.md`; the review tier approves it. Readiness and divergence rules: playbook step 3.
 5. `to-tickets` slices the plan into `.scratch/<feature>/issues/`; `tasks.md` indexes them.
-6. `implement` builds one ticket at a time (with `tdd` where a seam exists). If the build diverges, `plan.md` changes in the same commit.
+6. `implement` builds one ticket at a time (with `tdd` where a seam exists).
 7. Observed results go to `evidence.md`, including the browser script (playbook step 5); `code-review` against `REVIEW.md`, the `verifier` agent, and the independent audit go to `gate.md`.
 7a. Owner feedback on a running build becomes one numbered task and one evidence row per pass (playbook step 6).
 8. `traceability/requirements-map.md` is updated only after evidence passes.
 
-New plans start as a copy of `plans/plan-00-template/`.
+New plans start as a copy of `plans/plan-00-template/` without its `intent.md`; the accepted intent is moved in (step 0).
 
 ## One Home Per Fact
 
@@ -45,10 +45,13 @@ Each fact lives in exactly one file. Every other file cites it by ID or links to
 | Problem and outcome | `intent.md` until Accepted, then `spec.md` | The Accepted intent is history and frozen |
 | What, design, decisions, acceptance, scope | `spec.md` | `plan.md` and tickets link `spec.md#...` |
 | How: files, order, interfaces, tests | `plan.md` | Tickets link plan sections |
-| Task status | `tasks.md` (index) and the ticket (detail) | |
-| Observed results | `evidence.md` | `gate.md` links rows |
+| Task status | `tasks.md` (short index) and the ticket in `.scratch` (detail) | |
+| Observed results (expected results are not evidence) | `evidence.md` | `gate.md` links rows |
+| Readiness, blockers, independent review, verifier verdict, completion status | `gate.md` | |
 | A rule from a recurring mistake | `AGENTS.md` "Recurring Mistakes" (or code) | `issue-log.md` keeps the incident and links the rule |
 | A build-loop rule | `playbook.md` "Rules Learned" | |
+| Plan readiness, approval, and divergence rules | `playbook.md` step 3 | |
+| A rule enforced in code, and its limits | `playbook.md` "Enforced Rules" | `AGENTS.md`, `README.md`, and standards link it |
 
 ## Active Categories
 

@@ -15,7 +15,7 @@ Completion criterion: the agent can identify the package manager, environment in
 
 1. Verify the runtime and package manager versions match the manifest.
 2. Run one sequential install at the repository root. Do not use watch mode during bootstrap.
-3. Copy each required `.env.example` to a local env file and fill only local values. Keep env files untracked.
+3. The owner copies each required `.env.example` to a local env file and fills only local values (for example `! cp .env.example .env`). Agents do not read env files. Keep env files untracked.
 4. Install the skills named by `skills-lock.json` with `npx skills experimental_install`. The repository records the manifest, not vendored copies of installed skills.
 
 Completion criterion: dependencies resolve, local environment files exist where needed, and no credential or machine-specific installation directory is staged.

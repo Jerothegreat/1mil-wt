@@ -4,12 +4,12 @@ Record recurring bugs and setup issues once, newest first: symptom, root cause, 
 
 ## 2026-11-28
 
-### Guard hook blocked a commit that only mentioned the test lock
+### Shell-text guard rules never converged
 
-- Symptom: `git commit` was denied because its message contained `.scratch/test-lock`.
-- Root cause: the shell rule matched any command containing the path, not commands that change it.
-- Fix: the rule now matches only commands that create, move, copy, or remove the lock (`.claude/hooks/guard.mjs`, `LOCK_CHANGE`).
-- Prevention: regression test "merely mentioning the test lock is allowed" in `.claude/hooks/guard.test.mjs`. Hook rules match commands that act on a path, never the bare text.
+- Symptom: a hook that blocked test-lock removal and env-file access from the shell failed five verifier rounds in a row. Each round found a new phrasing (pipelines, `if … then rm`, `% { Remove-Item $_ }`) or a false block on an ordinary commit message.
+- Root cause: matching shell command text cannot cover every way to remove a file or read a secret.
+- Fix: the hook now enforces only push rules (`.claude/hooks/guard.mjs`); the rest is guidance checked by `REVIEW.md` and the verifier ("Enforced Rules" in `docs/workflow/playbook.md`).
+- Prevention: put a rule in a hook only when a tool call can check it reliably; otherwise leave it to review, or to a sandbox or permission settings.
 
 ## YYYY-MM-DD
 

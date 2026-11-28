@@ -21,7 +21,7 @@ The loop was distilled from the 1mil.dev Plan 02a retro-OS redesign: board first
 
 ### 1. Requirements
 
-- Work enters as an `intent.md` (problem, proposed outcome, affected users and systems, constraints, open questions) in `docs/workflow/intents/`. The owner accepts or closes it before any grilling.
+- Work enters as an intent in `docs/workflow/intents/` (template: `plans/plan-00-template/intent.md`). The owner accepts it into planning or closes it before any grilling.
 - Every behavior has a stable ID (`PG-`, `SF-`, `CM-`, `AI-`, `NFR-`) in one requirements file.
 - A plan names the IDs it touches; nothing is "done" without evidence against an ID.
 
@@ -39,7 +39,7 @@ Skip this phase only for work with no visual change.
 
 ### 3. Plan Packet
 
-Each plan has six files: `intent.md` (the accepted intake, frozen), `spec.md` (the WHAT: problem, outcome, design spec, decisions, acceptance criteria, out of scope; the owner approves), `plan.md` (the HOW: files, order of work, interfaces, proving tests; the review tier approves), `tasks.md` (one line per task with ID, summary, and requirement IDs), `evidence.md` (observed results only), and `gate.md` (checklist and status). Tickets for parallel or delegated work go in a local scratch folder; `tasks.md` indexes them. Each fact has one home ("One Home Per Fact" in `docs/workflow/README.md`).
+Each plan has six files: `intent.md`, `spec.md` (the owner approves), `plan.md` (the review tier approves), `tasks.md`, `evidence.md`, and `gate.md`. What each file owns is the "One Home Per Fact" table in `docs/workflow/README.md`. Tickets for parallel or delegated work go in a local scratch folder; `tasks.md` indexes them.
 
 - **Plan readiness test:** someone who never saw the conversation could build the change from `spec.md` and `plan.md` alone. Interrogate the plan until that is true.
 - **Nothing is implemented without an approved plan.** When the build diverges, update `plan.md` in the same commit and add a Divergences line. A change to an approved `spec.md` needs the owner.
@@ -48,7 +48,7 @@ Each plan has six files: `intent.md` (the accepted intake, frozen), `spec.md` (t
 
 - **Inline by default.** Use one session in one checkout. Delegate only isolated, independently verifiable tickets.
 - **Test first at seams.** Content rules, parsers, and pure builders get a failing test before the code. Record the red-then-green result in the evidence row.
-- **Bug fixes lock the test.** Write the failing test, confirm it fails for the expected reason, commit it, then create `.scratch/test-lock`. The guard hook blocks test edits until the owner removes the lock. Fix the code, not the test.
+- **Bug fixes start from a committed failing test.** Write the failing test, confirm it fails for the expected reason, commit it, then fix the code without touching that test. Review rejects a fix diff that edits it (`REVIEW.md` bugs pass).
 - **Content is data.** Pages read content files. Missing facts stay hidden or show a labeled placeholder ("screenshot soon", "details soon"). Never invent a fact.
 - **One shared component per pattern.** When a third place needs the same behavior (for example a maximize popup), extract it then, not before.
 - **Docs move with the code.** The same change updates the design brief, requirements, plan packet, and issue log.
@@ -99,20 +99,18 @@ When the owner says ship:
 
 ## Enforced Rules
 
-A rule that must hold without exception lives in code, not only in prose. Each block explains itself and names the route to approval.
+Only the rules a tool call can check reliably live in code. Each block explains itself and names the route to approval.
 
 | Rule | Enforced by | Decision |
 | --- | --- | --- |
-| Push only when the owner asks | `.claude/hooks/guard.mjs` on `git push` | Ask |
-| Never force-push or delete remote branches | guard hook | Deny |
-| Fix the code, not the test | guard hook, while `.scratch/test-lock` exists | Deny |
-| Secrets stay out of agent context | guard hook on `.env*` (not `.env.example`) | Deny |
-| Agents do not loosen their own guardrails | guard hook on `.claude/settings.json` and `.claude/hooks/` | Ask |
-| Approved scope changes only with the owner | guard hook on an Approved `spec.md` | Ask |
-| An Accepted intent is history | guard hook on an Accepted `intent.md` | Deny |
-| Packet files exist; one home per fact; cited IDs exist | `scripts/check-packet.mjs` in `{{CHECK_CMD}}` | Fail |
+| Push only when the owner asks | `.claude/hooks/guard.mjs` on `git push` (Bash and PowerShell) | Ask |
+| Never force-push, mirror, prune, or delete remote branches | guard hook | Deny |
+| The hook itself breaks | guard hook fails closed on input it cannot parse | Deny |
+| Packet files exist; spec and plan headings sit in the right file; cited requirement IDs exist; an Approved spec has an Accepted intent | `scripts/check-packet.mjs` in `{{CHECK_CMD}}` | Fail |
 
-Limits: the hook checks tool calls, not every shell edit (for example `sed` on a test file), so review still checks for edited tests. Hook tests: `node --test .claude/hooks/*.test.mjs scripts/*.test.mjs`.
+Guidance, checked by `REVIEW.md` and the `verifier` rather than a hook: fix the code, not the test; agents do not read env files; an Approved `spec.md` changes only with the owner; an Accepted intent is frozen; agents do not edit `.claude/settings*.json` or `.claude/hooks/` unless asked.
+
+Limits: the hook reads command text. A push through a git alias, `git subtree push`, `gh pr merge`, or a script file is not caught. Commit and tag messages are skipped as text. Restated meaning across files is caught by the `REVIEW.md` compliance pass, not by the packet check. Hook tests: `node --test .claude/hooks/*.test.mjs scripts/*.test.mjs`.
 
 ## Rules Learned
 
@@ -130,7 +128,7 @@ Limits: the hook checks tool calls, not every shell edit (for example `sed` on a
 
 Append newest first. Each entry says what happened and the rule now in the loop.
 
-- 2026-11-28: Adopted Anthropic's "The AI-native SDLC playbook" (claude.com, 2026-08-21) where it fits a solo kit. Zero-exception rules were prose only. Rules: intake as `intent.md`, `spec.md` (WHAT, owner) split from `plan.md` (HOW, review tier), one home per fact with a packet check, guard hooks, `REVIEW.md`, and a fresh-context `verifier` agent. Evals, CI agents, and the Maintain loop are deferred.
+- 2026-11-28: Adopted Anthropic's "The AI-native SDLC playbook" (claude.com, 2026-08-21) where it fits a solo kit. Zero-exception rules were prose only. Rules: intake as `intent.md`, `spec.md` (WHAT, owner) split from `plan.md` (HOW, review tier), one home per fact with a packet check, a push guard hook, `REVIEW.md`, and a fresh-context `verifier` agent. Evals, CI agents, and the Maintain loop are deferred.
 - 2026-10-23 (Alunsina): The owner, on a laptop, could not see the site on wide monitors; at 2560 and 3440 it was a 1200 px strip with bands stretched edge to edge. Board, parity, and screenshots had only covered 1280, 768, and 390, so nothing wider was ever rendered. Rules: boards include 1920 and 2560 frames and a wide (1536+) spec column; parity adds 1920; `templates/viewports.html` shows the running build at real widths from a laptop.
 - 2026-10-12: The first Alunsina board showed AI features only at the surface (booking) and boxed every section in glass cards. Rules: read the product's own AI/plan docs and show the real feature mechanics (what the AI reads, what it proposes, who approves, what the app then does); vary sections with full-width fills instead of a card per block; give long pages a navbar with active-section state and a mobile section-chip row.
 - 2026-10-12: A build made from an approved board did not match it at real screen sizes, because the board was a loose visual rather than a size-exact spec. The rule is now: boards render at exact CSS widths with production class names, tokens, and a per-breakpoint spec sheet, and the gate requires a screenshot parity check at 1280, 768, and 390 (step 2.5).

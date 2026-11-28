@@ -41,6 +41,29 @@ test("cited requirement IDs must exist; task IDs and ADRs are ignored", () => {
   ]);
 });
 
+test("Windows line endings do not hide unknown IDs or statuses", () => {
+  const errors = checkPacket("p", packet({ "tasks.md": "- [ ] `T-01` x. Requirements: ZZ-99.\r\n", "spec.md": "**Status:** Approved\r\n", "intent.md": "**Status:** Draft\r\n" }), known);
+  assert.equal(errors.length, 2);
+  assert.match(errors[0], /ZZ-99 is not in/);
+});
+
+test("known IDs come only from requirement rows and list items", () => {
+  const ids = requirementIds("Hashing uses SHA-256 and UTF-8.\n| PG-01 | Home | ... |\n|ADMIN-02|Admin|...|\n- G-1 goal\n");
+  assert.deepEqual([...ids].sort(), ["ADMIN-02", "G-1", "PG-01"]);
+});
+
+test("formatted and digit-bearing IDs count as defined; fenced Requirements lines are ignored", () => {
+  const ids = requirementIds("| `SF-02` | x |\n| **CM-03** | y |\n| A11Y-01 | z |\n| PAYMENTS-01 | w |\n");
+  assert.deepEqual([...ids].sort(), ["A11Y-01", "CM-03", "PAYMENTS-01", "SF-02"]);
+  const errors = checkPacket("p", packet({ "plan.md": "~~~\nRequirements: ZZ-01\n## Problem\n~~~\n```\nRequirements: ZZ-02\n```\n" }), known);
+  assert.deepEqual(errors, []);
+});
+
+test("long prefixes are checked and code fences are ignored", () => {
+  const errors = checkPacket("p", packet({ "plan.md": "**Requirements:** ADMIN-01\n```md\n## Problem\n```\n" }), known);
+  assert.deepEqual(errors, ["p/plan.md: ADMIN-01 is not in docs/product/requirements-engineering.md. Add it there first, or fix the ID."]);
+});
+
 test("an Approved spec requires an Accepted intent", () => {
   const draftIntent = packet({ "spec.md": "**Status:** Approved\n", "intent.md": "**Status:** Draft\n" });
   assert.match(checkPacket("p", draftIntent, known)[0], /spec\.md is Approved but intent\.md is not/);

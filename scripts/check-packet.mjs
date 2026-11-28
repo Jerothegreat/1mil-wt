@@ -9,13 +9,18 @@ import { pathToFileURL } from "node:url";
 export const PACKET_FILES = ["intent.md", "spec.md", "plan.md", "tasks.md", "evidence.md", "gate.md"];
 const SPEC_ONLY = /^#{1,6}\s+(problem|solution|outcome|design spec|round \d+ decisions|acceptance criteria|out of scope)\b.*$/gim;
 const PLAN_ONLY = /^#{1,6}\s+(implementation decisions|order of work|testing decisions)\b.*$/gim;
-const ID = /\b(?!ADR-)[A-Z]{1,4}-\d+\b/g;
+const ID = /\b(?!ADR-)[A-Z][A-Z0-9]{0,11}-\d+\b/g;
+const DEFINED_ID = /^\s*(?:\|\s*|[-*]\s+)[`*]*([A-Z][A-Z0-9]{0,11}-\d+)\b/;
 const REQUIREMENTS = "docs/product/requirements-engineering.md";
 
 const status = (text = "") => (text.match(/^\*\*Status:\*\*\s*(\w+)/im)?.[1] ?? "").toLowerCase();
 
+const lines = (text = "") => text.split(/\r?\n/);
+const withoutFences = (text = "") => text.replace(/^(```|~~~)[\s\S]*?^\1/gm, "");
+
+// Defined IDs are the first cell of a table row or the start of a list item.
 export function requirementIds(text) {
-  return new Set(text.match(ID) ?? []);
+  return new Set(lines(text).map((line) => line.match(DEFINED_ID)?.[1]).filter(Boolean));
 }
 
 export function checkPacket(name, files, knownIds) {
@@ -23,14 +28,14 @@ export function checkPacket(name, files, knownIds) {
   for (const file of PACKET_FILES) {
     if (files[file] === undefined) errors.push(`${name}: missing ${file}. Copy it from docs/workflow/plans/plan-00-template/ and fill it.`);
   }
-  for (const m of (files["plan.md"] ?? "").matchAll(SPEC_ONLY)) {
+  for (const m of withoutFences(files["plan.md"]).matchAll(SPEC_ONLY)) {
     errors.push(`${name}/plan.md: "${m[0].trim()}" belongs in spec.md (the WHAT). Move it there and link it from plan.md.`);
   }
-  for (const m of (files["spec.md"] ?? "").matchAll(PLAN_ONLY)) {
+  for (const m of withoutFences(files["spec.md"]).matchAll(PLAN_ONLY)) {
     errors.push(`${name}/spec.md: "${m[0].trim()}" belongs in plan.md (the HOW). Move it there and link it from spec.md if needed.`);
   }
   for (const file of ["spec.md", "plan.md", "tasks.md"]) {
-    for (const line of (files[file] ?? "").split("\n")) {
+    for (const line of lines(withoutFences(files[file]))) {
       const cited = line.match(/Requirements:\**(.*)$/i)?.[1] ?? "";
       for (const id of cited.match(ID) ?? []) {
         if (!knownIds.has(id)) errors.push(`${name}/${file}: ${id} is not in ${REQUIREMENTS}. Add it there first, or fix the ID.`);
@@ -38,7 +43,7 @@ export function checkPacket(name, files, knownIds) {
     }
   }
   if (status(files["spec.md"]) === "approved" && status(files["intent.md"]) !== "accepted") {
-    errors.push(`${name}: spec.md is Approved but intent.md is not. Set intent.md to "**Status:** Accepted → spec.md".`);
+    errors.push(`${name}: spec.md is Approved but intent.md is not. Set intent.md to "**Status:** Accepted" (the owner accepts it into planning).`);
   }
   return errors;
 }

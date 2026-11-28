@@ -3,7 +3,7 @@
 A reusable build workflow for AI-assisted projects, first used on 1mil.dev. It covers:
 - **Design first:** grill the idea, then build a clickable first-look board at real screen sizes.
 - **Spec-driven plans:** intent, requirements, a spec (what) and a plan (how), tickets, evidence, and a gate. Each fact has one home.
-- **Rules in code:** guard hooks, a plan packet check, `REVIEW.md`, and a fresh-context verifier agent, following Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook).
+- **Rules in code:** a push guard hook, a plan packet check, `REVIEW.md`, and a fresh-context verifier agent, following Anthropic's [AI-native SDLC playbook](https://claude.com/resources/articles/the-ai-native-sdlc-playbook).
 - **Cheaper models for the bulk of the work:** GLM or DeepSeek build in OpenCode or Claude Code, and a stronger model reviews and merges.
 
 It is plain files, not an app. Copy it into each new project, and bring improvements back here (especially "Improving The Playbook" in `docs/workflow/playbook.md`).
@@ -42,8 +42,8 @@ Details: `docs/workflow/playbook.md`.
 
 - `AGENTS.md` / `CLAUDE.md`: agent rules (Claude Code, Codex, and OpenCode read them).
 - `REVIEW.md`: review policy (three passes, what counts as Important, at most five nits).
-- `.claude/settings.json` + `.claude/hooks/guard.mjs`: guard hook (push asks; force-push, test edits during a fix, and `.env` access are denied; approved specs ask). `.claude/agents/verifier.md`: fresh-context final check.
-- `scripts/check-packet.mjs`: fails when a plan is missing a file, a fact sits in the wrong file, or a cited requirement ID does not exist. Tests: `node --test .claude/hooks/*.test.mjs scripts/*.test.mjs`.
+- `.claude/settings.json` + `.claude/hooks/guard.mjs`: the guard hook, and `scripts/check-packet.mjs`: the plan packet check. Both enforce the rules in "Enforced Rules" in `docs/workflow/playbook.md`. Tests: `node --test .claude/hooks/*.test.mjs scripts/*.test.mjs`.
+- `.claude/agents/verifier.md`: fresh-context final check.
 - `docs/workflow/playbook.md`: the build loop and its "Rules Learned".
 - `docs/workflow/`: intents, roadmap, plan packet template (`intent`, `spec`, `plan`, `tasks`, `evidence`, `gate`), traceability map.
 - `docs/agents/`: bootstrap, skill and model routing (flash-tier rules, Impeccable), local issue tracker, model setup (Claude Code and OpenCode with GLM or DeepSeek).

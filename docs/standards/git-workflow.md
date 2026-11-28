@@ -26,7 +26,7 @@ For a verified plan or phase:
 2. Run `{{CHECK_CMD}}` and any plan-specific checks and record results in the plan's `evidence.md`.
 3. Request independent code review (see the model routing in `docs/agents/skill-policy.md`). Critical and High findings block promotion; fix and repeat. If the owner explicitly promotes first, the gate records "promoted by owner, independent review owed" and the review stays open.
 4. Record the verified SHA in the plan's `gate.md`.
-5. Ask for explicit current-chat authorization before commit, merge, push, or branch deletion. The guard hook (`.claude/hooks/guard.mjs`) asks before every `git push` and denies force-push and remote deletion.
+5. Ask for explicit current-chat authorization before commit, merge, push, or branch deletion. The guard hook enforces this ("Enforced Rules" in `docs/workflow/playbook.md`).
 6. Fast-forward `{{PROD_BRANCH}}` to `{{DEV_BRANCH}}` (`git merge --ff-only {{DEV_BRANCH}}`) and push only when authorized. If `{{PROD_BRANCH}}` has commits `{{DEV_BRANCH}}` lacks, merge `{{PROD_BRANCH}}` into `{{DEV_BRANCH}}` first and re-verify.
 7. Confirm the {{DEPLOY}} deploy, or name the human step it needs (root directory, environment variables).
 8. Never force-push. Never promote skipped evidence as complete.

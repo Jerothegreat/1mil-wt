@@ -90,13 +90,7 @@ The handoff also includes the review-tier prompt the owner pastes into Claude Co
 
 - `docs/workflow/README.md` is the only implementation entrypoint.
 - `docs/workflow/roadmap.md` identifies the owning plan.
-- Every active plan has `intent.md`, `spec.md`, `plan.md`, `tasks.md`, `evidence.md`, and `gate.md`; `scripts/check-packet.mjs` enforces it.
-- `intent.md` is the accepted intake and is frozen once Accepted.
-- `spec.md` owns problem, outcome, design, decisions, acceptance criteria, and scope. The owner approves it.
-- `plan.md` owns files, order of work, interfaces, dependencies, and proving tests. The review tier approves it.
-- `tasks.md` is a short execution index; detailed temporary tickets live in `.scratch`.
-- `evidence.md` records observed commands and results. Expected results are not evidence.
-- `gate.md` owns readiness, blockers, independent review, and completion status.
+- Every active plan has the six packet files; what each owns is "One Home Per Fact" in `docs/workflow/README.md`, and `scripts/check-packet.mjs` enforces the structure.
 - `docs/workflow/plans/` is the only plan directory. Git history preserves retired paths.
 - A conversational plan is not saved until its canonical files exist and have been read back.
 
